@@ -14,7 +14,7 @@ import retrofit2.Response
 abstract class BaseRepository(private val coroutinesContextProvider: CoroutinesContextProvider,
                               private val connectivity: Connectivity) {
 
-    private suspend fun <T> request(call: suspend () -> Response<BaseResponse<T>>): Resource<T> {
+    protected suspend fun <T> request(call: suspend () -> Response<BaseResponse<T>>): Resource<T> {
         try {
             if (!connectivity.isNetworkConnected()) {
                 return Resource.Error(ERROR.NO_NETWORK_ERROR, "no network")

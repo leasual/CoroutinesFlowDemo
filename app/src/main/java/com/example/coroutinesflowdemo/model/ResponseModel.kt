@@ -20,3 +20,13 @@ data class GirlResp(
     val url: String,
     val views: Int
 )
+
+data class TokenResp(
+    val token: String
+)
+
+data class LoginResp(
+    var userName: String,
+    var nickName: String,
+    var avatarUrl: String
+)
