@@ -1,7 +1,12 @@
 package com.example.coroutinesflowdemo.extension
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.retryWhen
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.coroutinesflowdemo.core.BaseViewModel
+import com.example.coroutinesflowdemo.core.util.Resource
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
 
@@ -13,6 +18,21 @@ import timber.log.Timber
 fun <T> Flow<T>.retryWhen(retryMaxTimes: Int = 3): Flow<T> {
     return this.retryWhen { cause, attempt ->
         Timber.d("james retryWhen count= $attempt retryMaxTimes= $retryMaxTimes")
-        return@retryWhen cause is Exception && attempt < retryMaxTimes
+        cause is Exception && attempt < retryMaxTimes
+    }
+}
+
+@ExperimentalCoroutinesApi
+fun <T> Flow<T>.loading(loading: MutableLiveData<Boolean>): Flow<T> {
+    return this.onStart { loading.postValue(true) }
+        .onCompletion { loading.postValue(false) }
+}
+
+
+@ExperimentalCoroutinesApi
+fun <R, T: Resource<R>> Flow<T>.success(viewModel: BaseViewModel<*>, success: (R?) -> Unit): Flow<T> {
+    return this.mapLatest {
+        viewModel.handleResult(it, success)
+        it
     }
 }

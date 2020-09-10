@@ -1,4 +1,4 @@
-package com.example.coroutinesflowdemo.ui
+package com.example.coroutinesflowdemo.core
 
 import android.os.Bundle
 import androidx.annotation.LayoutRes

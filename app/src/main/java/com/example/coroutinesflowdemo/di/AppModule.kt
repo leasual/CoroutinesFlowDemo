@@ -4,13 +4,9 @@ import android.content.Context
 import com.example.coroutinesflowdemo.BuildConfig
 import com.example.coroutinesflowdemo.api.GankService
 import com.example.coroutinesflowdemo.data.AppDatabase
-import com.example.coroutinesflowdemo.repository.Connectivity
-import com.example.coroutinesflowdemo.repository.ConnectivityImpl
-import com.example.coroutinesflowdemo.repository.CoroutinesContextProvider
-import com.example.coroutinesflowdemo.repository.NewsRepository
+import com.example.coroutinesflowdemo.core.util.CoroutinesContextProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -58,6 +54,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideCoroutinesContextProvider() = CoroutinesContextProvider()
+    fun provideCoroutinesContextProvider() =
+        CoroutinesContextProvider()
 
 }

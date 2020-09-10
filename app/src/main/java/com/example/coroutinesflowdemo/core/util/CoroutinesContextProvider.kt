@@ -1,4 +1,4 @@
-package com.example.coroutinesflowdemo.repository
+package com.example.coroutinesflowdemo.core.util
 
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton

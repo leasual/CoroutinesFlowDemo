@@ -1,49 +1,51 @@
 package com.example.coroutinesflowdemo.ui
 
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.example.coroutinesflowdemo.api.GankService
+import com.example.coroutinesflowdemo.core.BaseViewModel
+import com.example.coroutinesflowdemo.core.util.Resource
+import com.example.coroutinesflowdemo.extension.loading
+import com.example.coroutinesflowdemo.extension.success
+import com.example.coroutinesflowdemo.model.BaseResponse
 import com.example.coroutinesflowdemo.model.GirlResp
-import com.example.coroutinesflowdemo.repository.NewsRepository
-import com.example.coroutinesflowdemo.repository.Resource
+import com.example.coroutinesflowdemo.repository.HomePageRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
-import java.lang.Exception
 
-class HomePageViewModel@ViewModelInject constructor(val repository: NewsRepository): ViewModel() {
+class HomePageViewModel@ViewModelInject constructor(
+    private val gankService: GankService,
+    private val repository: HomePageRepository) : BaseViewModel<HomePageViewModel.HomePageUiModel>() {
 
-//    var girlPictures = repository.getGirlPictures(1, 10)
-    val loading = MutableLiveData<Boolean>(false)
+    val girlList: Flow<PagingData<GirlResp>> = Pager(PagingConfig(pageSize = 10)) {
+        GirlPagingSource(gankService)
+    }.flow.cachedIn(viewModelScope)
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun login() {
-        repository.getToken()
-            .onStart {
-                Timber.d("james on start")
-                loading.postValue(true)
-            }
-            .flatMapConcat {
-                Timber.d("james token end it= $it thread= ${Thread.currentThread().name}")
-                if (it is Resource.Success) {
-                    repository.login()
-                } else {
-                    Timber.d("james token error end it= $it")
-                    throw Exception("get token error")
-                }
-            }
+
+    @ExperimentalCoroutinesApi
+    @FlowPreview
+    fun getGirlPictures() {
+        repository.getGirlPicturesFlow(1, 10)
             .flowOn(Dispatchers.IO)
+            .loading(loading)
             .catch {
                 Timber.d("james error= ${it.message}")
                 it.printStackTrace()
             }
-            .onEach {  }
-            .onCompletion {
-                Timber.d("james on completed thread= ${Thread.currentThread().name}")
-                loading.postValue(false)
+            .success(this) {
+                updateUiModel(HomePageUiModel(girls = it))
             }.launchIn(viewModelScope)
     }
+
+
+    data class HomePageUiModel(
+        val girls: List<GirlResp>? = null
+    )
 }

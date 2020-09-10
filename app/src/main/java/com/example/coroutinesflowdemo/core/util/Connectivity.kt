@@ -1,4 +1,4 @@
-package com.example.coroutinesflowdemo.repository
+package com.example.coroutinesflowdemo.core.util
 
 /**
  * Create by james.li on 2020/9/9

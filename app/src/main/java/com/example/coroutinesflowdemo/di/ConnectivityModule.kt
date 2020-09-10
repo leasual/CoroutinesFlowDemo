@@ -1,7 +1,7 @@
 package com.example.coroutinesflowdemo.di
 
-import com.example.coroutinesflowdemo.repository.Connectivity
-import com.example.coroutinesflowdemo.repository.ConnectivityImpl
+import com.example.coroutinesflowdemo.core.util.Connectivity
+import com.example.coroutinesflowdemo.core.util.ConnectivityImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

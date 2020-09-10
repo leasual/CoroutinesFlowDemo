@@ -1,4 +1,4 @@
-package com.example.coroutinesflowdemo.repository
+package com.example.coroutinesflowdemo.core.util
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -14,7 +14,8 @@ import javax.inject.Singleton
  */
 
 @Singleton
-class ConnectivityImpl@Inject constructor(@ApplicationContext private val context: Context): Connectivity {
+class ConnectivityImpl@Inject constructor(@ApplicationContext private val context: Context):
+    Connectivity {
 
     override fun isNetworkConnected(): Boolean {
         var result = false

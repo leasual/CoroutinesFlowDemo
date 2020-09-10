@@ -1,9 +1,10 @@
-package com.example.coroutinesflowdemo.data
+package com.example.coroutinesflowdemo.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.coroutinesflowdemo.data.model.News
 import kotlinx.coroutines.flow.Flow
 
 @Dao

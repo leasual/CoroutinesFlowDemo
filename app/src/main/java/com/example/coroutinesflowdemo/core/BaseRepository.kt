@@ -1,9 +1,12 @@
-package com.example.coroutinesflowdemo.repository
+package com.example.coroutinesflowdemo.core
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
-import androidx.lifecycle.map
 import com.example.coroutinesflowdemo.model.BaseResponse
+import com.example.coroutinesflowdemo.core.util.Connectivity
+import com.example.coroutinesflowdemo.core.util.CoroutinesContextProvider
+import com.example.coroutinesflowdemo.core.util.ERROR
+import com.example.coroutinesflowdemo.core.util.Resource
 import retrofit2.Response
 
 /**
@@ -12,26 +15,41 @@ import retrofit2.Response
  */
 
 abstract class BaseRepository(private val coroutinesContextProvider: CoroutinesContextProvider,
-                              private val connectivity: Connectivity) {
+                              private val connectivity: Connectivity
+) {
 
     protected suspend fun <T> request(call: suspend () -> Response<BaseResponse<T>>): Resource<T> {
         try {
             if (!connectivity.isNetworkConnected()) {
-                return Resource.Error(ERROR.NO_NETWORK_ERROR, "no network")
+                return Resource.Error(
+                    ERROR.NO_NETWORK_ERROR,
+                    "no network"
+                )
             }
             val response = call.invoke()
             if (response.isSuccessful) {
                 val body = response.body()
                 return if (body != null && body.code == 100) {
-                    Resource.Success(body.data)
+                    Resource.Success(
+                        body.data
+                    )
                 } else {
-                    Resource.ServerError("[${body?.code}] server error", code = body?.code)
+                    Resource.ServerError(
+                        "[${body?.code}] server error",
+                        code = body?.code
+                    )
                 }
             } else {
-                return Resource.ServerError("[${response.code()}] server error", code = response.code())
+                return Resource.ServerError(
+                    "[${response.code()}] server error",
+                    code = response.code()
+                )
             }
         } catch (e: Exception) {
-            return Resource.Error(ERROR.UNKNOWN_ERROR, "unknown error")
+            return Resource.Error(
+                ERROR.UNKNOWN_ERROR,
+                "unknown error"
+            )
         }
     }
 
@@ -43,7 +61,11 @@ abstract class BaseRepository(private val coroutinesContextProvider: CoroutinesC
             }
             val source = request { networkCall.invoke() }
             if (source is Resource.Success) {
-                emit(Resource.Success(source.data!!))
+                emit(
+                    Resource.Success(
+                        source.data!!
+                    )
+                )
             } else {
                 emit(source)
             }

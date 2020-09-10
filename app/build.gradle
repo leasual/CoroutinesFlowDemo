@@ -82,6 +82,11 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
     //Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
+    //Paging3
+    def paging_version = "3.0.0-alpha06"
+    implementation "androidx.paging:paging-runtime:$paging_version"
+    // optional - Guava ListenableFuture support
+    implementation "androidx.paging:paging-guava:$paging_version"
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

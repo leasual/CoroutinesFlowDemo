@@ -1,17 +1,22 @@
 package com.example.coroutinesflowdemo.ui
 
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.coroutinesflowdemo.R
+import com.example.coroutinesflowdemo.core.BaseActivity
 import com.example.coroutinesflowdemo.extension.clicks
 import com.example.coroutinesflowdemo.extension.retryWhen
+import com.example.coroutinesflowdemo.extension.subscribe
 import com.example.coroutinesflowdemo.extension.textChanges
-import com.example.coroutinesflowdemo.repository.ERROR
-import com.example.coroutinesflowdemo.repository.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -21,32 +26,44 @@ import kotlin.random.Random
 class MainActivity : BaseActivity() {
 
     private val viewModel: HomePageViewModel by viewModels()
+    private val girlAdapter by lazy { GirlAdapter() }
 
     override fun getLayoutId(): Int = R.layout.activity_main
 
 
+    @ExperimentalCoroutinesApi
+    @FlowPreview
     override fun setupViews() {
 
+        rvGirlList.apply {
+            layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
+            setHasFixedSize(true)
+            adapter = girlAdapter
+        }
 
-        viewModel.login()
+        lifecycleScope.launch {
+            viewModel.girlList.collectLatest {
+                girlAdapter.submitData(it)
+            }
+        }
 
 //        testForCollect()
 
-        textView.clicks()
-            .debounce(100)
-            .onEach {
-                textView.text = "click text= ${Random.nextInt(0, 10)}"
-            }.launchIn(lifecycleScope)
-
-        editText.textChanges()
-            .debounce(1000)
-            .onEach {
-                textView.text = it
-            }
-            .launchIn(lifecycleScope)
+//        textView.clicks()
+//            .debounce(100)
+//            .onEach {
+//                textView.text = "click text= ${Random.nextInt(0, 10)}"
+//            }.launchIn(lifecycleScope)
+//
+//        editText.textChanges()
+//            .debounce(1000)
+//            .onEach {
+//                textView.text = it
+//            }
+//            .launchIn(lifecycleScope)
     }
 
-    private fun testForCollect() {
+   /* private fun testForCollect() {
         val flowInt = flowOf(1, 2, 3, 4)
         val flowString = flowOf("A", "B", "C", "D", "E")
         lifecycleScope.launch {
@@ -94,39 +111,45 @@ class MainActivity : BaseActivity() {
                 textView.text = it
             }
             .launchIn(lifecycleScope)
-    }
+    }*/
 
     override fun observeData() {
         viewModel.loading.observe(this, Observer {
             Timber.d("james loading= $it")
+            Toast.makeText(this, "show dialog= $it", Toast.LENGTH_SHORT).show()
         })
-//        viewModel.girlPictures.observe(this, Observer {
-//            Timber.d("james observe data")
-//
-//            when (it) {
-//                is Resource.Success -> {
-//                    Timber.d("james data size ${it.data?.size}")
-//                }
-//                is Resource.Error -> {
-//                    when (it.error) {
-//                        ERROR.NO_NETWORK_ERROR -> {
-//                            Timber.e("james error= no network")
-//                        }
-//                        ERROR.NETWORK_ERROR -> {
-//                            Timber.e("james error= network error")
-//                        }
-//                        ERROR.UNKNOWN_ERROR -> {
-//                            Timber.e("james error= unknown error")
-//                        }
-//                    }
-//                }
-//                is Resource.Loading -> {
-//                    Timber.d("james loading")
-//                }
-//                is Resource.ServerError -> {
-//                    Timber.e("james server error= ${it.message}")
-//                }
-//            }
-//        })
+        viewModel.uiModel.subscribe(this) { uiModel ->
+            uiModel?.girls?.let {
+                Timber.d("james get data size= ${it.size}")
+            }
+        }
+       /* viewModel.girlPictures.observe(this, Observer {
+            Timber.d("james observe data")
+
+            when (it) {
+                is Resource.Success -> {
+                    Timber.d("james data size ${it.data?.size}")
+                }
+                is Resource.Error -> {
+                    when (it.error) {
+                        ERROR.NO_NETWORK_ERROR -> {
+                            Timber.e("james error= no network")
+                        }
+                        ERROR.NETWORK_ERROR -> {
+                            Timber.e("james error= network error")
+                        }
+                        ERROR.UNKNOWN_ERROR -> {
+                            Timber.e("james error= unknown error")
+                        }
+                    }
+                }
+                is Resource.Loading -> {
+                    Timber.d("james loading")
+                }
+                is Resource.ServerError -> {
+                    Timber.e("james server error= ${it.message}")
+                }
+            }
+        })*/
     }
 }
