@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.coroutinesflowdemo.model.GirlResp
 import com.example.coroutinesflowdemo.repository.NewsRepository
 import com.example.coroutinesflowdemo.repository.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -26,7 +27,7 @@ class HomePageViewModel@ViewModelInject constructor(val repository: NewsReposito
                 loading.postValue(true)
             }
             .flatMapConcat {
-                Timber.d("james token end it= $it")
+                Timber.d("james token end it= $it thread= ${Thread.currentThread().name}")
                 if (it is Resource.Success) {
                     repository.login()
                 } else {
@@ -34,12 +35,14 @@ class HomePageViewModel@ViewModelInject constructor(val repository: NewsReposito
                     throw Exception("get token error")
                 }
             }
+            .flowOn(Dispatchers.IO)
             .catch {
                 Timber.d("james error= ${it.message}")
                 it.printStackTrace()
             }
+            .onEach {  }
             .onCompletion {
-                Timber.d("james on completed")
+                Timber.d("james on completed thread= ${Thread.currentThread().name}")
                 loading.postValue(false)
             }.launchIn(viewModelScope)
     }
