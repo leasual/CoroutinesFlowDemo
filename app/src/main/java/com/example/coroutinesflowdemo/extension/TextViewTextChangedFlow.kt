@@ -1,0 +1,58 @@
+package com.example.coroutinesflowdemo.extension
+
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.TextView
+import androidx.annotation.CheckResult
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.conflate
+
+/**
+ * Create by james.li on 2020/9/10
+ * Description:
+ */
+
+/**
+ * Create a [InitialValueFlow] of text changes on the [TextView] instance
+ * where the value emitted is the current text.
+ *
+ * Note: Values emitted by this flow are **mutable** owned by the host [TextView]
+ * and thus are **not safe** to cache or delay reading (such as by observing
+ * on a different thread). If you want to cache or delay reading the items emitted then you must
+ * map values through a function which calls [String.valueOf()] or
+ * [CharSequence.toString()] to create a copy.
+ *
+ * Note: Created flow keeps a strong reference to the [TextView] instance
+ * until the coroutine that launched the flow collector is cancelled.
+ *
+ * Example of usage:
+ *
+ * ```
+ * textView.textChanges()
+ *     .onEach { text ->
+ *          // handle text
+ *     }
+ *     .launchIn(uiScope)
+ * ```
+ */
+@CheckResult
+@OptIn(ExperimentalCoroutinesApi::class)
+public fun TextView.textChanges(): InitialValueFlow<CharSequence> = callbackFlow<CharSequence> {
+    checkMainThread()
+    val listener = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) = Unit
+
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            safeOffer(s)
+        }
+
+        override fun afterTextChanged(s: Editable) = Unit
+    }
+
+    addTextChangedListener(listener)
+    awaitClose { removeTextChangedListener(listener) }
+}
+    .conflate()
+    .asInitialValueFlow { text }
