@@ -2,10 +2,7 @@ package com.example.coroutinesflowdemo.ui
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
+import androidx.paging.*
 import com.example.coroutinesflowdemo.api.GankService
 import com.example.coroutinesflowdemo.core.BaseViewModel
 import com.example.coroutinesflowdemo.core.util.Resource

@@ -17,11 +17,12 @@ class GirlPagingSource(
             val data = gankService.getGirlPictures(nextPage, 10)
             if (data.isSuccessful && data.body()?.code == 100) {
                 val body = data.body()
-                val dataList = body?.data ?: return LoadResult.Error(Exception())
+                val dataList = body?.data ?: return LoadResult.Error(Exception("error"))
+                if (dataList.isEmpty()) return LoadResult.Error(Exception("end"))
                 return LoadResult.Page(
                     data = dataList,
                     prevKey = if (nextPage == 1) null else nextPage - 1,
-                    nextKey = body.page + 1
+                    nextKey = if (dataList.isEmpty() || dataList.size < body.pageCount) null else body.page + 1
                 )
             } else {
                 return LoadResult.Error(Exception())

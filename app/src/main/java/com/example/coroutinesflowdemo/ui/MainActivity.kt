@@ -4,29 +4,30 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.bumptech.glide.Glide
 import com.example.coroutinesflowdemo.R
 import com.example.coroutinesflowdemo.core.BaseActivity
-import com.example.coroutinesflowdemo.extension.clicks
-import com.example.coroutinesflowdemo.extension.retryWhen
-import com.example.coroutinesflowdemo.extension.subscribe
-import com.example.coroutinesflowdemo.extension.textChanges
+import com.example.coroutinesflowdemo.core.util.CommonPagingAdapter
+import com.example.coroutinesflowdemo.extension.*
+import com.example.coroutinesflowdemo.model.GirlResp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers
+import kotlinx.android.synthetic.main.listitem_girl_item.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.random.Random
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
 
     private val viewModel: HomePageViewModel by viewModels()
-    private val girlAdapter by lazy { GirlAdapter() }
+    private lateinit var loadMoreAdapter: GirlLoadStateAdapter
 
     override fun getLayoutId(): Int = R.layout.activity_main
 
@@ -35,15 +36,24 @@ class MainActivity : BaseActivity() {
     @FlowPreview
     override fun setupViews() {
 
+        srlRefresh.setOnRefreshListener {
+            commonAdapter.refresh()
+            loadMoreAdapter.loadState = LoadState.NotLoading(endOfPaginationReached = true)
+        }
+
         rvGirlList.apply {
             layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
             setHasFixedSize(true)
-            adapter = girlAdapter
+            loadMoreAdapter = GirlLoadStateAdapter { commonAdapter.retry() }
+            adapter = commonAdapter.withLoadStateFooter(
+                footer = loadMoreAdapter
+            )
         }
 
         lifecycleScope.launch {
             viewModel.girlList.collectLatest {
-                girlAdapter.submitData(it)
+                srlRefresh.isRefreshing = false
+                commonAdapter.submitData(it)
             }
         }
 
@@ -151,5 +161,28 @@ class MainActivity : BaseActivity() {
                 }
             }
         })*/
+    }
+
+    private val commonAdapter = CommonPagingAdapter(
+        GirlComparator,
+        arrayOf(R.layout.listitem_girl_item),
+        arrayOf(GirlResp::class.java), { itemView, model, position ->
+            Glide.with(this)
+                .load(model?.url ?: "")
+                .into(itemView.imageView)
+        }, { model, position ->
+            Timber.d("click item position= $position")
+        }
+    )
+
+    object GirlComparator : DiffUtil.ItemCallback<GirlResp>() {
+        override fun areItemsTheSame(oldItem: GirlResp, newItem: GirlResp): Boolean {
+            // Id is unique.
+            return oldItem._id == newItem._id
+        }
+
+        override fun areContentsTheSame(oldItem: GirlResp, newItem: GirlResp): Boolean {
+            return oldItem == newItem
+        }
     }
 }
