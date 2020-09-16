@@ -1,16 +1,16 @@
 package com.example.coroutinesflowdemo.repository
 
-import com.example.coroutinesflowdemo.api.GankService
-import com.example.coroutinesflowdemo.core.BaseRepository
-import com.example.coroutinesflowdemo.core.util.Connectivity
-import com.example.coroutinesflowdemo.core.util.CoroutinesContextProvider
-import com.example.coroutinesflowdemo.core.util.Resource
+import com.example.coroutinesflowdemo.api.AppService
+import com.wesoft.archcore.BaseRepository
+import com.wesoft.archcore.util.Connectivity
+import com.wesoft.archcore.util.CoroutinesContextProvider
+import com.wesoft.archcore.util.Resource
 import com.example.coroutinesflowdemo.model.GirlResp
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 import javax.inject.Inject
 
-class HomePageRepository@Inject constructor(private val gankService: GankService,
+class HomePageRepository@Inject constructor(private val gankService: AppService,
                                             coroutinesContextProvider: CoroutinesContextProvider,
                                             connectivity: Connectivity
 ): BaseRepository(coroutinesContextProvider, connectivity) {

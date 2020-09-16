@@ -1,4 +1,4 @@
-package com.example.coroutinesflowdemo.extension
+package com.wesoft.archcore.extension
 
 import android.text.Editable
 import android.text.TextWatcher

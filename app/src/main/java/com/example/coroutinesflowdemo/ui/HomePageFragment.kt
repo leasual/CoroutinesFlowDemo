@@ -1,10 +1,9 @@
 package com.example.coroutinesflowdemo.ui
 
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.example.coroutinesflowdemo.R
-import com.example.coroutinesflowdemo.core.BaseFragment
-import com.example.coroutinesflowdemo.extension.subscribe
+import com.wesoft.archcore.BaseFragment
+import com.wesoft.archcore.extension.subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 

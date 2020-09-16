@@ -1,4 +1,4 @@
-package com.example.coroutinesflowdemo.extension
+package com.wesoft.archcore.extension
 
 import android.os.Looper
 import androidx.annotation.RestrictTo

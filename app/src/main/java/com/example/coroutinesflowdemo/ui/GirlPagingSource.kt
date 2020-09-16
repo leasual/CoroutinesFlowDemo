@@ -1,14 +1,14 @@
 package com.example.coroutinesflowdemo.ui
 
 import androidx.paging.PagingSource
-import com.example.coroutinesflowdemo.api.GankService
+import com.example.coroutinesflowdemo.api.AppService
 import com.example.coroutinesflowdemo.model.GirlResp
 //https://proandroiddev.com/how-to-use-the-paging-3-library-in-android-5d128bb5b1d8
 //https://github.com/android/architecture-components-samples/blob/master/PagingWithNetworkSample/app/src/main/java/com/android/example/paging/pagingwithnetwork/reddit/repository/inDb/PageKeyedRemoteMediator.kt
 //https://www.youtube.com/watch?v=1cwqGOku2a4&list=PLDA8WhPNyyEBzXWuivlROVjYTLszDXs9j&index=2&t=0s
 
 class GirlPagingSource(
-    private val gankService: GankService
+    private val gankService: AppService
 ): PagingSource<Int, GirlResp>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, GirlResp> {

@@ -1,4 +1,4 @@
-package com.example.coroutinesflowdemo.extension
+package com.wesoft.archcore.extension
 
 import androidx.annotation.CheckResult
 import androidx.viewpager.widget.ViewPager

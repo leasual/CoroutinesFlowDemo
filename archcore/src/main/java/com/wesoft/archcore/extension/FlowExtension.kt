@@ -1,10 +1,12 @@
-package com.example.coroutinesflowdemo.extension
+package com.wesoft.archcore.extension
 
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.coroutinesflowdemo.core.BaseViewModel
-import com.example.coroutinesflowdemo.core.util.Resource
+import androidx.lifecycle.lifecycleScope
+import com.wesoft.archcore.BaseViewModel
+import com.wesoft.archcore.util.Resource
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -35,4 +37,14 @@ fun <R, T: Resource<R>> Flow<T>.success(viewModel: BaseViewModel<*>, success: (R
         viewModel.handleResult(it, success)
         it
     }
+}
+
+fun <T> Flow<T>.subscribe(activity: AppCompatActivity, event: (T) -> Unit) {
+    this.onEach { event.invoke(it) }
+        .launchIn(activity.lifecycleScope)
+}
+
+fun <T> Flow<T>.subscribe(fragment: Fragment, event: (T) -> Unit) {
+    this.onEach { event.invoke(it) }
+        .launchIn(fragment.lifecycleScope)
 }

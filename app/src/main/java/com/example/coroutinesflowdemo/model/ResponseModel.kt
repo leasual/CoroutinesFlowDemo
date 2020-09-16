@@ -1,5 +1,6 @@
 package com.example.coroutinesflowdemo.model
 
+import com.wesoft.archcore.AbsBaseResponse
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -13,7 +14,11 @@ data class BaseResponse<T>(
     @SerializedName("page_count") var pageCount: Int,
     @SerializedName("status") var code: Int,
     @SerializedName("total_counts") var totalCount: Int,
-)
+): AbsBaseResponse<T> {
+    override fun isSuccessful(): Boolean = code == 100
+    override fun data(): T = data
+    override fun code(): Int = code
+}
 
 data class GirlResp(
     val _id: String,

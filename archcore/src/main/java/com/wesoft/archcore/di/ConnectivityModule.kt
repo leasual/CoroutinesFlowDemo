@@ -1,7 +1,7 @@
-package com.example.coroutinesflowdemo.di
+package com.wesoft.archcore.di
 
-import com.example.coroutinesflowdemo.core.util.Connectivity
-import com.example.coroutinesflowdemo.core.util.ConnectivityImpl
+import com.wesoft.archcore.util.Connectivity
+import com.wesoft.archcore.util.ConnectivityImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

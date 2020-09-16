@@ -1,2 +1,3 @@
+include ':archcore'
 rootProject.name = "CoroutinesFlowDemo"
 include ':app'

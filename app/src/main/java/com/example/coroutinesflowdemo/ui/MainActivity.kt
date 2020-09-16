@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.coroutinesflowdemo.R
-import com.example.coroutinesflowdemo.core.BaseActivity
-import com.example.coroutinesflowdemo.core.util.CommonPagingAdapter
-import com.example.coroutinesflowdemo.extension.*
+import com.wesoft.archcore.BaseActivity
+import com.wesoft.archcore.util.CommonPagingAdapter
+import com.wesoft.archcore.extension.*
 import com.example.coroutinesflowdemo.model.GirlResp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,6 +22,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.random.Random
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
@@ -60,17 +61,15 @@ class MainActivity : BaseActivity() {
 //        testForCollect()
 
 //        textView.clicks()
-//            .debounce(100)
-//            .onEach {
+//            .debounce(500)
+//            .subscribe(this) {
 //                textView.text = "click text= ${Random.nextInt(0, 10)}"
-//            }.launchIn(lifecycleScope)
-//
+//            }
 //        editText.textChanges()
 //            .debounce(1000)
-//            .onEach {
+//            .subscribe(this) {
 //                textView.text = it
 //            }
-//            .launchIn(lifecycleScope)
     }
 
    /* private fun testForCollect() {

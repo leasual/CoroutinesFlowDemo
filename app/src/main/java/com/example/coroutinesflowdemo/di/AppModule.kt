@@ -2,11 +2,9 @@ package com.example.coroutinesflowdemo.di
 
 import android.content.Context
 import com.example.coroutinesflowdemo.BuildConfig
-import com.example.coroutinesflowdemo.api.GankService
+import com.example.coroutinesflowdemo.api.AppService
 import com.example.coroutinesflowdemo.data.AppDatabase
-import com.example.coroutinesflowdemo.core.util.CoroutinesContextProvider
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.wesoft.archcore.di.AbsBaseAppModule
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,34 +13,26 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
 @InstallIn(ApplicationComponent::class)
-object AppModule {
+object AppModule: AbsBaseAppModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().apply {
-        addInterceptor(HttpLoggingInterceptor().apply { level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.BODY })
+    override fun provideOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient = OkHttpClient.Builder().apply {
+        addInterceptor(httpLoggingInterceptor.apply { level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.BODY })
     }.build()
 
     @Singleton
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit = Retrofit.Builder()
-        .baseUrl(BuildConfig.BASE_URL)
-        .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .build()
+    override fun provideBaseURL(): String = BuildConfig.BASE_URL
 
     @Singleton
     @Provides
-    fun provideGson(): Gson = GsonBuilder().create()
+    override fun provideAppService(retrofit: Retrofit) = retrofit.create(AppService::class.java)
 
-    @Singleton
-    @Provides
-    fun provideGankService(retrofit: Retrofit): GankService = retrofit.create(GankService::class.java)
 
     @Singleton
     @Provides
@@ -51,10 +41,5 @@ object AppModule {
     @Singleton
     @Provides
     fun provideNewDao(db: AppDatabase) = db.getNewsDao()
-
-    @Singleton
-    @Provides
-    fun provideCoroutinesContextProvider() =
-        CoroutinesContextProvider()
 
 }

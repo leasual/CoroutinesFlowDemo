@@ -1,4 +1,4 @@
-package com.example.coroutinesflowdemo.extension
+package com.wesoft.archcore.extension
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.annotation.CheckResult
