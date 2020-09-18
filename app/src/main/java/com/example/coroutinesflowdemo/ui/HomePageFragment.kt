@@ -25,8 +25,10 @@ class HomePageFragment: BaseFragment() {
         }
 
         viewModel.uiModel.subscribe(this) { uiModel ->
-            uiModel?.girls?.let {
-                Timber.d("james get data size= ${it.size}")
+            uiModel.apply {
+                girls?.let {
+                    Timber.d("james get data size= ${it.size}")
+                }
             }
         }
     }
